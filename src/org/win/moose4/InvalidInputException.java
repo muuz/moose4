@@ -1,3 +1,5 @@
+package org.win.moose4;
+
 /**
  * A general-purpose exception thrown when input provided to a method is invalid
  */

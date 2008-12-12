@@ -1,4 +1,6 @@
-import java.io.IOException
+package org.win.moose4;
+
+import java.io.IOException;
 import java.net.Socket;
 
 /**
@@ -20,8 +22,22 @@ extends ConnectFourClient
 	throws IOException
 	{
 		super(ip, port);
-		_board = new ConnectFourBoard();
-		_comm = new ConnectFourCommunicator(_s);
+		try {
+			_board = new ConnectFourBoard();
+			_comm = new ConnectFourCommunicator(_s);
+		} catch( InvalidInputException iie ) {
+			System.err.println(iie.getMessage());
+			System.err.println("ERROR: An exception has been " +
+				"thrown when it shouldn't have been."
+			);
+			System.exit(1);
+		} catch( IOException ioe ) {
+			System.err.println(ioe.getMessage());
+			System.err.println("Error: An I/O issue has occured "+
+				"while connecting to the server."
+			);
+			System.exit(1);
+		}
 	}
 
 	/**
@@ -43,23 +59,26 @@ extends ConnectFourClient
 	public void myMove()
 	{
 		//GET MOVE FROM GUI
-		_board.makeMove(move, Constants.WHITE);
-		_comm.writeMove(someMove);
+		//_board.makeMove(move, Constants.WHITE);
+		//_comm.writeMove(someMove);
 		//UPDATE GUI
 	}
 
 	public boolean oppMove()
 	{
+		boolean rtn = true;
 		Message move = _comm.readMove();
 		_board.makeMove(move, Constants.BLACK);
 		//UPDATE GUI
 		if( move.mType == 1 ) {
 			//Server claims illegal
 			//Probably means you win
-			return false;
+			rtn = false;
 		} else if ( move.mType == 2 ) {
 			//Server wins
-			return false;
+			rtn = false;
 		}
+
+		return rtn;
 	}
 }

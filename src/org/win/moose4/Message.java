@@ -1,3 +1,5 @@
+package org.win.moose4;
+
 public class Message implements java.io.Serializable{
 	int row;
 	int col;

@@ -1,3 +1,5 @@
+package org.win.moose4;
+
 import java.io.IOException;
 import java.net.Socket;
 
@@ -9,7 +11,7 @@ public class ConnectFourClient
 	/**
 	 * The socket to connect with
 	 */
-	private Socket _s;
+	protected Socket _s;
 
 	/**
 	 * Construct a new connect-4 client with the given IP address of

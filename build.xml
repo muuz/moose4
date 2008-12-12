@@ -1,0 +1,47 @@
+<project name="moose4" default="dist" basedir=".">
+	<description>
+		Build script for the moose4 source tree.
+	</description>
+
+	<!-- set global properties for this build -->
+	<property name="src" location="src"/>
+	<property name="buildroot" location="build"/>	
+	<property name="classes" location="${buildroot}/classes"/>
+	<property name="dist" location="${buildroot}/dist"/>
+	<property environment="env"/>
+
+	<target name="mkdirs" description="Make necessary directories">
+		<mkdir dir="${buildroot}"/>
+		<mkdir dir="${classes}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<target name="compile" depends="mkdirs" 
+		description="compile the source">
+		<javac
+			srcdir="${src}"
+			destdir="${classes}"
+			debug="true"
+		>
+			<include name="**/*.java"/>
+		</javac>	
+	</target>
+
+	<target name="dist" depends="compile" description="Jar up the classes">
+		<manifest file="${buildroot}/manifest.mf">
+			<attribute name="Built-By" value="${user.name}"/>
+			<attribute name="Main-Class"
+				value="org.win.moose4.ConnectFour"
+			/>		
+		</manifest>
+
+		<tstamp/>
+		<jar jarfile="${dist}/moose4-${DSTAMP}.jar"
+			basedir="${classes}" manifest="${buildroot}/manifest.mf"
+		/>
+	</target>
+	
+	<target name="clean" description="clean up" >
+		<delete dir="${buildroot}"/>
+	 </target>
+</project>

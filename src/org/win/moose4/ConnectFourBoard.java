@@ -1,3 +1,5 @@
+package org.win.moose4;
+
 import java.util.Vector;
 import java.util.Random;
 

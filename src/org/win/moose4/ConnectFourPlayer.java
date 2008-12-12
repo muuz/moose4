@@ -1,3 +1,5 @@
+package org.win.moose4;
+
 import java.net.Socket;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
@@ -20,11 +22,6 @@ public class ConnectFourPlayer
 	 */
 	private ConnectFourCommunicator _comm;
 
-	/**
-	 * The GUI
-	 */
-	private CFourBoardGUI _gui;
-	
 	/**
 	 * Construct a new ConnectFourPlayer with the given parameters
 	 * @param s The socket to communicate on
@@ -125,7 +122,6 @@ public class ConnectFourPlayer
 			_ai.printBoard();
 			_ai.printMoves();
 
-			printToGUI();
 			System.exit(0);
 		} else if ( move.mType == 2 ) {
 			_ai.printBoard();
@@ -136,11 +132,9 @@ public class ConnectFourPlayer
 			Runtime x = Runtime.getRuntime();
 			System.out.println("Memory used: " + (x.totalMemory() - x.freeMemory()));
 			
-			printToGUI();
 			System.exit(0);
 		} else {
 			claimIllegal("Proposed type is illegal: "+move.mType);
-			printToGUI();
 			System.exit(0);
 		}
 	}
@@ -155,28 +149,12 @@ public class ConnectFourPlayer
 		if( msg.mType == 1 ) {
 			_ai.printBoard();
 			_ai.printMoves();
-			printToGUI();
 			System.exit(0);
 		} else if( msg.mType == 2 ) {
 			_ai.printBoard();
 			_ai.printMoves();
-			printToGUI();
 			System.exit(0);
 		}
-	}
-
-	/**
-	 * Paint the GUI
-	 */
-	private void printToGUI(){
-			//finished - print board
-			_gui = new CFourBoardGUI();
-			_gui.setBoard(_ai.getBoard());
-			try {
-				Thread.sleep(500000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 	}
 
 	/**
@@ -192,6 +170,5 @@ public class ConnectFourPlayer
 
 		Runtime x = Runtime.getRuntime();
 		System.out.println("Memory used: " + (x.totalMemory() - x.freeMemory()));
-		printToGUI();
 	}
 }
