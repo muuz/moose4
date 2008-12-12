@@ -1,8 +1,8 @@
 How to run:
-1) Extract the tarball
-2) Compile the code (javac *.java)
-3) Start the server (java ConnectFour server)
-4) Start the client (java ConnectFour client <IP> <PORT>)
+1) Build the project (ant)
+2) Change directories into your distro directory (cd build/dist)
+3) Start the server (java -jar *JARNAME*.jar server)
+4) Start the client (java -jar *JARNAME*.jar client <IP> <PORT>)
 
 
 Important notes:
