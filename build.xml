@@ -8,6 +8,7 @@
 	<property name="buildroot" location="build"/>	
 	<property name="classes" location="${buildroot}/classes"/>
 	<property name="dist" location="${buildroot}/dist"/>
+	<property name="pics" location="pics"/>
 	<property environment="env"/>
 
 	<target name="mkdirs" description="Make necessary directories">
@@ -15,8 +16,17 @@
 		<mkdir dir="${classes}"/>
 		<mkdir dir="${dist}"/>
 	</target>
+
+	<target name="copy" depends="mkdirs"
+		description="Copy pictures to build tree"
+	>
+		<copy todir="${buildroot}/pics">
+			<fileset dir="${pics}"/>
+		</copy>
+	</target>
 	
-	<target name="compile" depends="mkdirs" 
+	
+	<target name="compile" depends="copy" 
 		description="compile the source">
 		<javac
 			srcdir="${src}"
