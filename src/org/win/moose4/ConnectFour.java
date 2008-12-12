@@ -9,16 +9,12 @@ import java.io.IOException;
 public class ConnectFour
 {
 	/**
-	 * The port that the server runs on
-	 */
-	private final static int SRV_PORT = 44521;
-
-	/**
 	 * Print the usage message on STDERR
 	 */
 	private static void printUsage()
 	{
-		System.err.println("USAGE: java ConnectFour <server|client> " +
+		System.err.println("USAGE: java ConnectFour " +
+			"<server|client|human> " +
 			"<ip_of_server> <port_on_server>"
 		);
 	}
@@ -28,11 +24,16 @@ public class ConnectFour
 	 */
 	public static void main(String argv[])
 	{
-		if( argv.length == 0 ) {
+		/* Display usage and quit */
+		if( argv.length == 0 ||
+			argv[0].equalsIgnoreCase("-h") ||
+			argv[0].equals("--help")
+		) {
 			printUsage();
 		} else if( argv[0].equalsIgnoreCase("Server")) {
 			try {
-				new ConnectFourServer(SRV_PORT).runServer();
+				new ConnectFourServer(
+					Constants.SVR_PORT).runServer();
 			} catch ( IOException ioe ) {
 				System.err.println(ioe.getMessage());
 				System.err.println("ERROR: I/O issue has "+
@@ -58,6 +59,9 @@ public class ConnectFour
 			}
 		} else if( argv[0].equalsIgnoreCase("Human")) {
 			if( argv.length != 3 ) {
+				System.err.println("ERROR: Please provide " +
+					"an HOST and a PORT"
+				);
 				printUsage();
 			} else {
 				try {
@@ -66,13 +70,19 @@ public class ConnectFour
 					).runClient();
 				} catch( NumberFormatException nfe ) {
 					System.err.println(
-						"Port must be a number"
+						"ERROR: Port must be a number"
 					);
 					printUsage();
 				} catch( IOException ioe ) {
-					ioe.printStackTrace();
+					System.err.println("ERROR: Server " +
+						"'"+argv[1]+":"+argv[2]+"'" +
+						" couldn't be contacted"
+					);
 				}
 			}
+		} else {
+			System.err.println("Unrecognized mode: " + argv[0]);
+			printUsage();
 		}
 	}
 }

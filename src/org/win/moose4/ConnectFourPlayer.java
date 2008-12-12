@@ -54,15 +54,11 @@ public class ConnectFourPlayer
 	 */
 	public void playServerGame()
 	{
-		boolean done = false;
-		
 		oppMove();
 		myFirstMove();
 
-		while( !done ) {
-			oppMove();
-			myMove();
-		}
+		// Play the game
+		while( oppMove() && myMove() ); 
 	}
 
 	/**
@@ -70,15 +66,11 @@ public class ConnectFourPlayer
 	 */
 	public void playClientGame()
 	{
-		boolean done = false;
-		
 		myFirstMove();
 		oppMove();
 
-		while( !done ) {
-			myMove();
-			oppMove();
-		}
+		// Play the game
+		while( myMove() && oppMove() ); 
 	}
 
 	/**
@@ -91,11 +83,13 @@ public class ConnectFourPlayer
 
 	/**
 	 * Read an opponents move from the wire and process it
+	 * @return true if the game continues, false otherwise
 	 */
-	private void oppMove()
+	private boolean oppMove()
 	{
 		Message move = _comm.readMove();
 		
+		// Regular move message
 		if( move.mType == 0 ) {
 			if( _ai.validateMove(move) ) {
 				_ai.makeOppMove(move);
@@ -105,7 +99,7 @@ public class ConnectFourPlayer
 				claimIllegal("Proposed move is illegal: " +
 					move.row+"-"+move.col
 				);
-				System.exit(0);
+				return false;
 			}
 
 			if( _ai.lastMoveWins() != Constants.OPEN ) {
@@ -113,48 +107,59 @@ public class ConnectFourPlayer
 					"-"+move.col+") wins and was not "+
 					"marked as such."
 				);
-				
-				System.exit(0);
+				return false;
 			}
+		//Opponent claims an illegal move was made
 		} else if ( move.mType == 1 ) {
 			System.out.println("Illegal claim!");
 
 			_ai.printBoard();
 			_ai.printMoves();
 
-			System.exit(0);
+			return false;
+		//Opponent claims to be making a winning move
 		} else if ( move.mType == 2 ) {
 			_ai.printBoard();
 
 			_ai.printMoves();
-			System.out.println("Claimed winning move: " +	move.row + "-" + move.col);
+			System.out.println("Claimed winning move: " +
+				move.row + "-" + move.col
+			);
 			
-			Runtime x = Runtime.getRuntime();
-			System.out.println("Memory used: " + (x.totalMemory() - x.freeMemory()));
-			
-			System.exit(0);
+			return false;
+		//Opponent has sent an unrecognized message type
 		} else {
-			claimIllegal("Proposed type is illegal: "+move.mType);
-			System.exit(0);
+			claimIllegal("Proposed message type '" + move.mType +
+				"' is not recognized"
+			);
+			return false;
 		}
+
+		return true;
 	}
 
 	/**
 	 * Calculate and perform our next move
+	 * @return true if the game should continue, false otherwise
 	 */
-	private void myMove()
+	private boolean myMove()
 	{
+		boolean rtn = true;
 		Message msg = _ai.getNextMove();
 		_comm.writeMove(msg);
 		if( msg.mType == 1 ) {
+			System.out.println("I call shenanagans!");
 			_ai.printBoard();
 			_ai.printMoves();
-			System.exit(0);
+			rtn = false;
 		} else if( msg.mType == 2 ) {
+			System.out.println("I claim victory!");
 			_ai.printBoard();
 			_ai.printMoves();
-			System.exit(0);
+			rtn = false;
 		}
+
+		return rtn;
 	}
 
 	/**
@@ -167,8 +172,5 @@ public class ConnectFourPlayer
 		_comm.writeMove(new Message(0, 0, 1));
 		_ai.printBoard();
 		_ai.printMoves();
-
-		Runtime x = Runtime.getRuntime();
-		System.out.println("Memory used: " + (x.totalMemory() - x.freeMemory()));
 	}
 }

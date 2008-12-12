@@ -34,11 +34,15 @@ public class ConnectFourServer
 	throws IOException
 	{
 		Socket s;
+		//TODO: while(true) should be non-infinite..."
 		while(true) {
 			System.out.print("Waiting for connection...");
 			s = _ss.accept();
 			System.out.println("DONE");
-			new ConnectFourPlayer(s, Constants.BLACK).playServerGame();
+			new ConnectFourPlayer(
+				s, Constants.BLACK
+			).playServerGame();
+
 			s.close();
 		}
 	}
