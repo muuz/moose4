@@ -75,39 +75,6 @@ public class ConnectFourBoard
 	}
 
 	/**
-	 * Construct a new Connect-4 board with the given parameters
-	 * @param board The core board to begin with
-	 * @param row The row reading of the next move to make
-	 * @param col The column reading of the next move to make
-	 * @param colour The colour of the next move to make
-	 */
-	public ConnectFourBoard(byte board[][], int row, int col, byte colour)
-	{
-		_rows = board.length;
-		_cols = board[0].length;
-		_board = new byte[_rows][_cols];
-		_children = new ConnectFourBoard[_cols];
-		_currentRow = new int[_cols];
-		for( int i=0; i<_currentRow.length; ++i ) {
-			_currentRow[i] = -1;
-		}
-
-		for( int r=0; r<_rows; ++r ) {
-			for( int c=0; c<_cols; ++c ) {
-				if( r == row && c == col ) {
-					_board[r][c] = colour;
-				} else {
-					_board[r][c] = board[r][c];
-				}
-
-				if( _board[r][c] == Constants.OPEN ) {
-					_currentRow[c] = r;
-				}
-			}
-		}
-	}
-
-	/**
 	 * Get a list of the currently available legal moves
 	 * @return The vector list of the legal moves
 	 */
@@ -126,17 +93,6 @@ public class ConnectFourBoard
 		return legalMoves;
 	}
 
-	/**
-	 * Generate all of the children for this board
-	 * @param colour The colour of the player making the next move
-	 */
-	public void generateChildren(byte colour)
-	{
-		for( int i=0; i<_cols; ++i ) {
-			_children[i] = generateCopyChild(i, colour);
-		}
-	}
-
 
 	/**
 	 * Generate a child of the current board for the given index and colour
@@ -150,25 +106,6 @@ public class ConnectFourBoard
 			if( _board[r][col] == Constants.OPEN ) {
 				makeMove(new Message(r, col, 0), colour);
 				return this;
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Generate a full copy child
-	 * @param col The column of the move for this child
-	 * @param colour The colour of the move
-	 * @return The newly generated child board or null
-	 */
-	private ConnectFourBoard generateCopyChild(int col, byte colour)
-	{
-		for( int r=_rows-1; r>=0; --r ) {
-			if( _board[r][col] == Constants.OPEN ) {
-				return new ConnectFourBoard(_board, r, col,
-					colour
-				);
 			}
 		}
 
@@ -396,16 +333,28 @@ public class ConnectFourBoard
 		total -= blackScores[2] * 5;
 
 		//twos with two or more open sides
-		total += whiteScores[3] * ((colour == Constants.WHITE) ? 10 : 20);
-		total -= blackScores[3] * ((colour == Constants.BLACK) ? 10 : 20);
+		total += whiteScores[3] * (
+			(colour == Constants.WHITE) ? 10 : 20
+		);
+		total -= blackScores[3] * (
+			(colour == Constants.BLACK) ? 10 : 20
+		);
 
 		//threes with one open side
-		total += whiteScores[4] * ((colour == Constants.WHITE) ? 30 : 40);
-		total -= blackScores[4] * ((colour == Constants.BLACK) ? 30 : 40);
+		total += whiteScores[4] * (
+			(colour == Constants.WHITE) ? 30 : 40
+		);
+		total -= blackScores[4] * (
+			(colour == Constants.BLACK) ? 30 : 40
+		);
 
 		//threes with two or more open sides
-		total += whiteScores[5] * ((colour == Constants.WHITE) ? 90 : 100);
-		total -= blackScores[5] * ((colour == Constants.BLACK) ? 90 : 100);
+		total += whiteScores[5] * (
+			(colour == Constants.WHITE) ? 90 : 100
+		);
+		total -= blackScores[5] * (
+			(colour == Constants.BLACK) ? 90 : 100
+		);
 
 		if( whiteScores[6] >= 1 && blackScores[6] >= 1 ) {
 			return (colour == Constants.WHITE ) ? Integer.MAX_VALUE:
@@ -696,8 +645,9 @@ public class ConnectFourBoard
 						Integer.MIN_VALUE : 
 						Integer.MAX_VALUE;
 				} else {
-					curHeur = _children[i].minimax(oppColour, 
-						maxDepth, curDepth+1, max, min
+					curHeur = _children[i].minimax(
+						oppColour, maxDepth, curDepth+1,
+						max, min
 					);
 				}
 
@@ -709,8 +659,10 @@ public class ConnectFourBoard
 				}
 				
 				//Alpha-Beta pruning
-				if( oppColour == Constants.WHITE && curHeur >= min ||
-				oppColour == Constants.BLACK && curHeur <= max
+				if( (oppColour == Constants.WHITE &&
+					curHeur >= min) ||
+					(oppColour == Constants.BLACK &&
+					curHeur <= max)
 				) {
 					unrollChild(i);
 					return curHeur;
