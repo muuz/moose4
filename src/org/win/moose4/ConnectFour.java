@@ -33,7 +33,8 @@ public class ConnectFour
 		} else if( argv[0].equalsIgnoreCase("Server")) {
 			try {
 				new ConnectFourServer(
-					Constants.SVR_PORT).runServer();
+					Constants.SVR_PORT
+				).runServer();
 			} catch ( IOException ioe ) {
 				System.err.println(ioe.getMessage());
 				System.err.println("ERROR: I/O issue has "+
@@ -51,10 +52,15 @@ public class ConnectFour
 					).runClient();
 				} catch( NumberFormatException nfe ) {
 					System.err.println(
-						"Port must be a number");
+						"ERROR: Port must be a number"
+					);
 					printUsage();
 				} catch( IOException ioe ) {
-					ioe.printStackTrace();
+					System.err.println("ERROR: Server " +
+						"'"+argv[1]+":"+argv[2]+"'" +
+						" couldn't be contacted"
+					);
+					printUsage();
 				}
 			}
 		} else if( argv[0].equalsIgnoreCase("Human")) {
@@ -65,9 +71,11 @@ public class ConnectFour
 				printUsage();
 			} else {
 				try {
-					new ConnectFourHumanClient(argv[1],
+					new ConnectFourGUI(
+						Constants.WHITE,
+						argv[1],
 						Integer.parseInt(argv[2])
-					).runClient();
+					);
 				} catch( NumberFormatException nfe ) {
 					System.err.println(
 						"ERROR: Port must be a number"

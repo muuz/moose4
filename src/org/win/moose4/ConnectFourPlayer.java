@@ -32,8 +32,6 @@ public class ConnectFourPlayer
 		try {
 			_ai = new ConnectFourAI(new ConnectFourBoard(), colour);
 			_comm = new ConnectFourCommunicator(s);
-
-						
 		} catch( InvalidInputException iie ) {
 			System.err.println(iie.getMessage());
 			System.err.println("ERROR: An exception has been " +
@@ -55,7 +53,7 @@ public class ConnectFourPlayer
 	public void playServerGame()
 	{
 		oppMove();
-		myFirstMove();
+		myMove();
 
 		// Play the game
 		while( oppMove() && myMove() ); 
@@ -66,7 +64,7 @@ public class ConnectFourPlayer
 	 */
 	public void playClientGame()
 	{
-		myFirstMove();
+		myMove();
 		oppMove();
 
 		// Play the game

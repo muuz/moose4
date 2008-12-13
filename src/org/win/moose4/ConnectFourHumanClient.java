@@ -11,6 +11,7 @@ extends ConnectFourClient
 {
 	private ConnectFourBoard _board;
 	private ConnectFourCommunicator _comm;
+
 	/**
 	 * Construct a new connect-4 client with the given IP and port of the
 	 * server
@@ -40,45 +41,32 @@ extends ConnectFourClient
 		}
 	}
 
-	/**
-	 * Start the client process
-	 * @throws IOException if things go wrong
-	 */
-	public void runClient()
-	throws IOException
-	{
-		boolean done = false;
-		while( !done ) {
-			myMove();
-			if( !oppMove() ) {
-				break;
-			}
-		}
-	}
-
-	public void myMove()
-	{
-		//GET MOVE FROM GUI
-		//_board.makeMove(move, Constants.WHITE);
-		//_comm.writeMove(someMove);
-		//UPDATE GUI
-	}
-
-	public boolean oppMove()
+	public boolean myMove(Message m)
 	{
 		boolean rtn = true;
-		Message move = _comm.readMove();
-		_board.makeMove(move, Constants.BLACK);
-		//UPDATE GUI
-		if( move.mType == 1 ) {
-			//Server claims illegal
-			//Probably means you win
-			rtn = false;
-		} else if ( move.mType == 2 ) {
-			//Server wins
+		if( m != null ) {
+			System.out.println("Check for win @: "+m.row+"-"+m.col);
+			_board.makeMove(m, Constants.WHITE);
+			if( _board.moveWins(m.row, m.col) != Constants.OPEN ) {
+				m.mType = 2;
+				rtn = false;
+			}
+
+			_comm.writeMove(m);
+		} else {
 			rtn = false;
 		}
 
 		return rtn;
+	}
+
+	public Message oppMove()
+	{
+		Message move = _comm.readMove();
+		if( move.mType != 1 ) {
+			_board.makeMove(move, Constants.BLACK);
+		}
+
+		return move;
 	}
 }

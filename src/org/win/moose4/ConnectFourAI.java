@@ -25,6 +25,11 @@ public class ConnectFourAI
 	private Vector<Message> _allMoves;
 
 	/**
+	 * A random number generator
+	 */
+	private Random _rng;
+
+	/**
 	 * Construct a new ConnectFourAI with the given parameters
 	 * @param board The starting board
 	 * @param colour The colour this AI should play for
@@ -41,6 +46,7 @@ public class ConnectFourAI
 		_board = board;
 		_colour = colour;
 		_allMoves = new Vector<Message>(49);
+		_rng = new Random();
 	}
 
 	/**
@@ -49,10 +55,11 @@ public class ConnectFourAI
 	 */
 	public Message randFirstMove()
 	{
+		// Get the legal moves from the current board layout
+		// Pick a random one, update the object as necessary
+		// return the move
 		Vector<Message> legalMoves = _board.getLegalMoves();
-		Message move = legalMoves.get(new Random().nextInt(
-			legalMoves.size())
-		);
+		Message move = legalMoves.get(_rng.nextInt(legalMoves.size()));
 		_allMoves.add(move);
 		_board.makeMove(move, _colour);
 		return move;

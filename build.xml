@@ -31,6 +31,7 @@
 		<javac
 			srcdir="${src}"
 			destdir="${classes}"
+			target="1.5"
 			debug="true"
 		>
 			<include name="**/*.java"/>

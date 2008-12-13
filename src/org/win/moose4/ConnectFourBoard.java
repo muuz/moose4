@@ -205,9 +205,9 @@ public class ConnectFourBoard
 			return moveColour;
 		}
 
+		/* CHECK VERTICAL */
 		connected = 1;
 
-		/* CHECK VERTICAL */
 		//cells above
 		for( int i = row-1; i >= 0; --i ) {
 			if( _board[i][col] == moveColour ) {
@@ -230,9 +230,9 @@ public class ConnectFourBoard
 			return moveColour;
 		}
 
+		/*CHECK ANGLES*/
 		connected = 1;
 
-		/*CHECK ANGLES*/
 		//SouthWest to NorthEast
 		for( int r=row-1, c=col+1; r>=0 && c<_cols; --r, ++c ) {
 			if( _board[r][c] == moveColour ) {
@@ -254,9 +254,10 @@ public class ConnectFourBoard
 			return moveColour;
 		}
 
-		connected = 1;
 	
 		//NorthWest to SouthEast
+		connected = 1;
+
 		for( int r=row+1, c=col+1; r<_rows && c<_cols; ++r, ++c ) {
 			if( _board[r][c] == moveColour ) {
 				connected++;
@@ -277,6 +278,7 @@ public class ConnectFourBoard
 			return moveColour;
 		}
 
+		// No win
 		return Constants.OPEN;
 	}
 
@@ -350,10 +352,10 @@ public class ConnectFourBoard
 
 		//threes with two or more open sides
 		total += whiteScores[5] * (
-			(colour == Constants.WHITE) ? 90 : 100
+			(colour == Constants.WHITE) ? 90 : 200
 		);
 		total -= blackScores[5] * (
-			(colour == Constants.BLACK) ? 90 : 100
+			(colour == Constants.BLACK) ? 90 : 200
 		);
 
 		if( whiteScores[6] >= 1 && blackScores[6] >= 1 ) {
@@ -752,12 +754,11 @@ public class ConnectFourBoard
 	public Message bestMove(byte colour)
 	{
 		boolean isFirst = true;
-		int bestHeur = 100000;
-		int idx = -1;
-		int nextValue;
+		int bestHeur = 100000, idx=-1, nextValue;
 		byte win = Constants.OPEN;
 		long time = System.currentTimeMillis();
 
+		// For each child of the current board layout
 		for( int i=0; i<_children.length; ++i ) {
 			_children[i] = generateChild(i, colour);
 			if( _children[i] != null ) {
@@ -775,7 +776,6 @@ public class ConnectFourBoard
 						);
 					}
 					idx = i;
-					System.out.println("Heuristic " +i + ": " + bestHeur);
 					isFirst = false;
 				} else {
 					if( win == Constants.BLACK ) {
@@ -783,13 +783,12 @@ public class ConnectFourBoard
 					} else if( win == Constants.WHITE ) {
 						nextValue = Integer.MAX_VALUE;
 					} else {
-						nextValue = _children[i].minimax(
+						nextValue= _children[i].minimax(
 							colour, Constants.DEPTH,
 							0, Integer.MIN_VALUE,
 							Integer.MAX_VALUE
 						);
 					}
-					System.out.println("Heuristic " +i + ": " + nextValue);
 					if(
 						(colour == Constants.WHITE &&
 							nextValue > bestHeur
@@ -812,14 +811,10 @@ public class ConnectFourBoard
 		) {
 			System.out.println("Doing random move");
 			Vector<Message> safeMoves = getLegalMoves();
-			System.out.println("Move time: " + 
-				(System.currentTimeMillis()-time)
-			);
 			return safeMoves.get(new Random().nextInt(
 				safeMoves.size())
 			);
 		}
-		System.out.println("Best heuristic: " + bestHeur);
 
 		if( idx == -1 ) {
 			System.out.println("TIE?");
@@ -828,9 +823,6 @@ public class ConnectFourBoard
 			);
 			return new Message(0,0,1);
 		} else {
-			System.out.println("Move time: " + 
-				(System.currentTimeMillis() - time)
-			);
 			win = moveWinsChecker(_currentRow[idx], idx,
 				colour);
 			return new Message(_currentRow[idx], idx,
