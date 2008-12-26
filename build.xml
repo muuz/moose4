@@ -20,7 +20,7 @@
 	<target name="copy" depends="mkdirs"
 		description="Copy pictures to build tree"
 	>
-		<copy todir="${buildroot}/pics">
+		<copy todir="${classes}/pics">
 			<fileset dir="${pics}"/>
 		</copy>
 	</target>
